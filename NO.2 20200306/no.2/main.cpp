@@ -2,7 +2,7 @@
 #include <opencv.hpp>
 
 using namespace cv;
-
+//À²À²À²
 void show();
 void show2();
 int main()
