@@ -1,101 +1,117 @@
 #include <opencv.hpp>
+#include <iostream>
+
 //20200313
+using namespace std;
+
 using namespace cv;
 
-void openCamera()
+void face()
 {
-	VideoCapture cap;
+	VideoCapture cap(0);
 
-	cap.open(0);
-	if (!cap.isOpened())
-	{
-		std::cout << "不能打开" << std::endl;
-		return;
-	}
+	double scale = 0.5;
 
-	double fps = cap.get(CAP_PROP_FPS);
-	std::cout << "fps" << fps << std::endl;
+
+	double i_minH = 0;
+	double i_maxH = 20;
+	double i_minS = 15;
+	double i_maxS = 255;
+	double i_minV = 55;
+	double i_maxV = 255;
+
+
 	while (1)
 	{
-		cv::Mat frame;
-		bool rSucess = cap.read(frame);
-		if (!rSucess)
-		{
-			std::cout << "不能从视频文件中读取帧" << std::endl;
-			break;
-		}
-		else
-		{
-			cv::imshow("frame", frame);
-		}
+		Mat frame;
+		Mat hsvMat;
+		Mat detectMat;
+
+		cap >> frame;
+		Size ResImgSiz = Size(frame.cols * scale, frame.rows * scale);
+		Mat rFrame = Mat(ResImgSiz, frame.type());
+		resize(frame, rFrame, ResImgSiz, INTER_LINEAR);
+
+		cvtColor(rFrame, hsvMat, COLOR_BGR2HSV);
+
+		rFrame.copyTo(detectMat);
+
+		cv::inRange(hsvMat, Scalar(i_minH, i_minS, i_minV), Scalar(i_maxH, i_maxS, i_maxV), detectMat);
+
+		imshow("white: in the range", detectMat);
+		imshow("frame", rFrame);
+
 		waitKey(30);
 	}
+
 	return;
 }
 
-void draw()
+void oneZero()
 {
-	cv::Mat dispMat = imread("C:\\Users\\lenovo\\Desktop\\1.png");
+	Mat srcImage = imread("C:\\Users\\lenovo\\Desktop\\1.jpg", 0);	
+	namedWindow("原图", WINDOW_NORMAL);
+	imshow("原图", srcImage);
 
-	cv::Point pt, pt1, pt2;
-	cv::Rect rect;
+	Mat dstImage1, dstImage2;
+	dstImage1.create(srcImage.rows, srcImage.cols, CV_8UC1);
+	dstImage2.create(srcImage.rows, srcImage.cols, CV_8UC1);
+	double time0 = static_cast<double>(getTickCount());	
 
-	rect.x = 10;
-	rect.y = 10;
-	rect.width = 100;
-	rect.height = 100;
+	threshold(srcImage, dstImage1, 83, 255, THRESH_BINARY);
+	adaptiveThreshold(srcImage, dstImage2, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, 9, 10);
 
-	pt.x = 10;
-	pt.y = 10;
-	pt1.x = 10;
-	pt1.y = 10;
-	pt2.x = 100;
-	pt2.y = 100;
-
-	rectangle(dispMat, rect, CV_RGB(255, 0, 0), 1, 8, 0);
-
-	circle(dispMat, pt, 100, CV_RGB(0, 255, 0), 1, 8, 0);
-
-	line(dispMat, pt1, pt2, CV_RGB(255, 0, 0, ), 1, 8, 0);
-
-	cv::imshow("dispMat", dispMat);
-
-	float histgram[256];
-	for (int j = 0; j < 256; j++)
-	{
-		histgram[j] = 0;
-	}
-	int height = dispMat.rows;
-	int width = dispMat.cols;
-	for (int j = 0; j < height; j++)
-	{
-		for (int i = 0; i < width; i++)
-		{
-			//\\/////////////////////////////////////////李竹老师是最帅的 ///////////////////////////////助教辛苦了
-			float average = (dispMat.at<Vec3b>(j, i)[0] * 0.299 + 0.587 * dispMat.at<Vec3b>(j, i)[1] + 0.114 * dispMat.at<Vec3b>(j, i)[2]) / 3;
-			//dispMat.at<Vec3b>(j, i)[0] = (float)(average);
-			//dispMat.at<Vec3b>(j, i)[1] = (float)(average);
-			//dispMat.at<Vec3b>(j, i)[2] = (float)(average);
-			histgram[(int)average]++;
-		}
-	}
+	time0 = ((double)getTickCount() - time0) / getTickFrequency();
+	cout << "此方法运行时间为：" << time0 << "秒" << endl;	
+	namedWindow("图1", WINDOW_NORMAL);
+	imshow("图1", dstImage1);
+	namedWindow("图2", WINDOW_NORMAL);
+	imshow("图2", dstImage2);
+	//waitKey(0);
 	return;
 }
+string window_name = "binaryMat";
 
+void threshod_Mat(int th, void* data)
+{
+	
+	Mat src = *(Mat*)(data);
+
+	Mat dst;
+
+	threshold(src, dst, th, 255, 0);
+
+	imshow(window_name, dst);
+}
+
+void rushB()//按钮
+{
+	Mat srcMat;
+	Mat gryMat;
+	int lowTh = 30;
+	int maxTh = 255;
+
+	srcMat = imread("C:\\Users\\lenovo\\Desktop\\2.jpg");
+	if (!srcMat.data)
+	{
+		cout << "失败" << endl;
+		return;
+	}
+	cvtColor(srcMat, gryMat, CV_BGR2GRAY);
+	imshow(window_name, gryMat);
+	createTrackbar("threshold",
+		window_name,
+		&lowTh,
+		maxTh,
+		threshod_Mat,
+		&gryMat);
+	//waitKey(0);
+	return;
+}
 int main()
 {
-	cv::Mat src_color = imread("C:\\Users\\lenovo\\Desktop\\1.png");
-	std::vector<cv::Mat> channels;
-	cv::split(src_color, channels);
-	cv::Mat B = channels.at(0);
-	cv::Mat G = channels.at(1);
-	cv::Mat R = channels.at(2);
-	cv::imshow("red", R);
-	cv::imshow("blue", B);
-	cv::imshow("green", G);
-	draw();				//画画了也遍历了
-	openCamera();
-
-	waitKey(0);
-	return 0;
+	oneZero();
+	rushB();
+	face();
+	
 }
