@@ -148,7 +148,7 @@ int ziDong()
 	cv::warpPerspective(srcMat, dstMat, perspective_matrix, srcMat.size());
 
 	cv::imshow("src", srcMat);
-	cv::imshow("×Ô¶¯", dstMat);
+	cv::imshow("zidong", dstMat);
 	cv::waitKey(0);
 	
 	return 1;
