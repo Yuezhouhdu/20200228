@@ -8,7 +8,7 @@ using namespace std;
 void process()
 {
 	Mat r1, r2, r3, r4;
-	Mat srcMat = imread("C:\\Users\\lenovo\\Desktop\\coin.png", 0);
+	Mat srcMat = imread("C:\\Users\\lenovo\\Desktop\\1.png", 0);
 	Mat dstMat;
 	Mat Core = getStructuringElement(MORPH_RECT, Size(4, 4));
 
@@ -33,7 +33,7 @@ void count()
 	Mat centerMat;
 	Mat dstMat;
 
-	Mat srcMat = imread("C:\\Users\\lenovo\\Desktop\\coin.png", 0);
+	Mat srcMat = imread("C:\\Users\\lenovo\\Desktop\\1.png", 0);
 	threshold(srcMat, dstMat, 100, 255, THRESH_BINARY);
 
 	int nComp = cv::connectedComponentsWithStats(dstMat,
@@ -76,7 +76,7 @@ void porcessCount()
 
 	Mat output;
 	Mat dstMat;
-	Mat srcMat = imread("C:\\Users\\lenovo\\Desktop\\1989.jpg", 0);	
+	Mat srcMat = imread("C:\\Users\\lenovo\\Desktop\\1.jpg", 0);	
 	threshold(srcMat, dstMat, 100, 255, THRESH_BINARY_INV);
 
 	Mat Core = getStructuringElement(MORPH_ELLIPSE, Size(10, 10));
@@ -101,8 +101,8 @@ void porcessCount()
 
 int main()
 {
-	process();
-	count();
+//	process();
+//	count();
 	porcessCount();
 	return 0;
 }
