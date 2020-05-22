@@ -18,20 +18,29 @@ using namespace cv;
 using namespace std;
 void gamma()
 {
-	Mat srcMat = imread("E://zy//大二下//数字图像处理//face.jpg",0);
+	Mat srcMat = imread("E:/上位机图像文件夹/2020.5.16 10.35.30/原图/9.bmp",0);
+	int height = srcMat.rows;
+	int width = srcMat.cols;
+	int rate = 4;
+	Mat dstMat=Mat::zeros(height,width,CV_8UC1);
+	Mat dstMat1 = Mat::zeros(height* rate, width* rate, CV_8UC1);
+	Mat dstMat2 = Mat::zeros(height* rate, width* rate, CV_8UC1);
 	float Lut[256] = { 0 };
 	for (int i = 0; i < 256; i++) 
 	{
-		Lut[i] = pow((float)i  / 255, 0.5)* 255;
+		Lut[i] = pow((float)i  / 255, 2.5)* 255;
 	}
 	for (int i = 0; i < srcMat.rows; i++)
 	{
 		for (int j = 0; j < srcMat.cols; j++)
 		{
-			srcMat.at<uchar>(i, j) = Lut[srcMat.at<uchar>(i, j)] ;
+			dstMat.at<uchar>(i, j) = Lut[srcMat.at<uchar>(i, j)] ;
 		}
 	}
-	imshow("srcMat", srcMat);
+	resize(srcMat, dstMat1, dstMat1.size());
+	resize(dstMat, dstMat2, dstMat2.size());
+	imshow("原图", dstMat1);
+	imshow("gamma", dstMat2);
 	waitKey(0);
 }
 void junheng()
@@ -105,7 +114,7 @@ void lizhu()
 }
 int main()
 {
-	//gamma();
+	gamma();
 	//junheng();
-	lizhu();
+	//lizhu();
 }
