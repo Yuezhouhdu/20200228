@@ -11,8 +11,6 @@
 using namespace cv;
 using namespace std;
 
-//RNG g_rng(12345);
-/****练习1：背景差分**********/
 int shipin()
 {
 	//实例化的同时初始化
@@ -44,7 +42,6 @@ int shipin()
 }
 
 
-/****练习2：实现高斯建模与背景差分**********/
 int calcGaussianBackground(std::vector<cv::Mat> srcMats, cv::Mat& meanMat, cv::Mat& varMat)
 {
 	int rows = srcMats[0].rows;
@@ -104,10 +101,7 @@ int gaussianThreshold(cv::Mat srcMat, cv::Mat meanMat, cv::Mat varMat, float wei
 int ziji()
 {
 	//实例化的同时初始化
-	//VideoCapture capture("D:\\opencv_picture_test\\videos\\video1.avi");		//类似于 int a=1;
-	//----------------------读取视频文件--------------------------
 	VideoCapture capVideo(0);
-	//VideoCapture capVideo("../testImages\\vtest.avi");
 
 	//如果视频打开失败
 	if (!capVideo.isOpened()) {
@@ -121,9 +115,9 @@ int ziji()
 
 	//参数设置
 	int nBg = 200;		//用来建立背景模型的数量
-	float wVar = 1;		//方差权重
+	float wVar = 2;		//方差的权重
 
-	int cnt = 0;
+	int jishu = 0;
 	cv::Mat frame;
 	cv::Mat meanMat;
 	cv::Mat varMat;
@@ -135,23 +129,24 @@ int ziji()
 		cvtColor(frame, frame, COLOR_BGR2GRAY);
 
 		//前面的nBg帧，计算背景
-		if (cnt < nBg) {
+		//去掉前面不稳定的部分！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+		if (jishu > 50 && jishu < nBg) {
 
 			srcMats.push_back(frame);
 
-			if (cnt == 0) {
+			if (jishu == 0) {
 				std::cout << "reading frame " << std::endl;
 			}
 
 		}
-		else if (cnt == nBg) {
+		else if (jishu == nBg) {
 			//计算模型
 			meanMat.create(frame.size(), CV_8UC1);
 			varMat.create(frame.size(), CV_32FC1);
 			std::cout << "calculating background models" << std::endl;
 			calcGaussianBackground(srcMats, meanMat, varMat);
 		}
-		else {
+		else if(jishu > nBg){
 			//背景差分
 			dstMat.create(frame.size(), CV_8UC1);
 			gaussianThreshold(frame, meanMat, varMat, wVar, dstMat);
@@ -160,7 +155,7 @@ int ziji()
 			waitKey(30);
 		}
 
-		cnt++;
+		jishu++;
 
 	}
 
@@ -169,7 +164,7 @@ int ziji()
 
 int main()
 {
-	shipin();
-	//ziji();
+	//shipin();
+	ziji();
 	return 0;
 }
