@@ -1,4 +1,5 @@
 //20200529
+//21.39
 #include <opencv2/opencv.hpp>
 #include <iostream>
 using namespace cv;
@@ -115,23 +116,9 @@ int huakuang()
 			}
 		}
 	}
-
-
-
-
-
 	rectangle(src, rect, CV_RGB(255, 255, 255), 1, 8, 0);
-
-
-
-	// imshow("test",dist);
-
 	imshow("test", src);
-
 	waitKey(0);
-
-
-
 	return 0;
 }
 
