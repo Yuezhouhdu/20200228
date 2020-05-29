@@ -16,7 +16,8 @@ int kuang()
 	while (1)
 	{
 		capture >> frame;	
-		if (num == 3) {                     //电脑差会卡帧
+		if (num == 3) //电脑差会卡帧
+		{                     
 			Rect2d r;
 			r = selectROI(frame, true);
 			tempMat = frame(r);
