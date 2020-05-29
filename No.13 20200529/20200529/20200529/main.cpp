@@ -8,14 +8,14 @@ int kuang()
 {
 	VideoCapture capture(0);
 	int num = 0;
-	Mat frame;	//存储每一帧的图像
+	Mat frame;	
 	Mat tempMat;
 	Mat refMat;
 	Mat resultMat;
 	Mat dispMat;
 	while (1)
 	{
-		capture >> frame;	//读取当前帧
+		capture >> frame;	
 		if (num == 3) {                     //电脑差会卡帧
 			Rect2d r;
 			r = selectROI(frame, true);
